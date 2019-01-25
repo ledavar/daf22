@@ -1,4 +1,4 @@
-package ru.greenavto.daf.gson.serializer;
+package ru.greenavto.daf.gson.serializer.component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;

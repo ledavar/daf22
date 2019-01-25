@@ -3,6 +3,7 @@ package ru.greenavto.daf.app;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class DafEndpointTest {
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    @BeforeClass
+    /*@BeforeClass
     public static void login() {
         String username = PropertiesReader.getUserName();
         String password = PropertiesReader.getPassword();
@@ -40,7 +41,7 @@ public class DafEndpointTest {
     }
 
     @Test
-    public void testVehicle() throws IOException, URISyntaxException {
+    public void testVehicle() throws IOException, URISyntaxException, DafException {
         String code = "0G124720";
         System.out.println(dafEndpoint.getVehicle("XLRTEH4300G124720"));
     }
@@ -112,6 +113,15 @@ public class DafEndpointTest {
     public void testCatalog() throws IOException, DafException, URISyntaxException {
         String code = "0g124720";
         LOGGER.debug("Trying to get Main Groups with List of Components: {}", dafEndpoint.getCatalog(code));
+    }*/
+
+
+    @Test
+    public void testLogin() {
+        String username = PropertiesReader.getUserName();
+        String password = PropertiesReader.getPassword();
+        assertEquals("OK", dafEndpoint.login(username, password));
     }
+
 
 }

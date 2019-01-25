@@ -5,22 +5,20 @@ import ru.greenavto.daf.exception.DafException;
 import ru.greenavto.daf.model.*;
 import ru.greenavto.daf.model.vehicle.Vehicle;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collection;
 
 public interface CatalogDao {
 
     int login(LoginInfo loginInfo) throws DafException;
 
-    Vin getVin(VinRequestDto vinRequestDto) throws IOException, URISyntaxException, DafException;
+    Vin getVin(VinRequestDto vinRequestDto) throws DafException;
 
-    Vehicle getVehicle(VehicleRequestDto vehicleRequestDto) throws URISyntaxException, IOException;
+    Vehicle getVehicle(VehicleRequestDto vehicleRequestDto) throws DafException;
 
-    Collection<MainGroup> getMainGroupsCollection(MainGroupRequestDto mainGroupRequestDto) throws URISyntaxException, IOException;
+    Collection<MainGroup> getMainGroupsCollection(MainGroupRequestDto mainGroupRequestDto) throws DafException;
 
-    Collection<Component> getComponentsCollection(ComponentRequestDto componentRequestDto) throws URISyntaxException, IOException;
+    Collection<Component> getComponentsCollection(ComponentRequestDto componentRequestDto) throws DafException;
 
-    Collection<Job> getJobsCollection(JobRequestDto jobRequestDto) throws URISyntaxException, IOException;
+    Collection<Job> getJobsCollection(JobRequestDto jobRequestDto) throws DafException;
 
 }

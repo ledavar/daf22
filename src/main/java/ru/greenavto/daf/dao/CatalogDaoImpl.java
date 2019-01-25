@@ -118,7 +118,6 @@ public class CatalogDaoImpl implements CatalogDao {
             LOGGER.debug("Perform GET request {}", loginUrl);
             HttpGet httpGet = new HttpGet(loginUrl);
             setHeadersOnGetRequest(httpGet);
-
             try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
                 LOGGER.debug("Recieved response: {}", response.getStatusLine());
             } catch (IOException e) {
@@ -132,21 +131,13 @@ public class CatalogDaoImpl implements CatalogDao {
     }
 
     @Override
-    public Vin getVin(VinRequestDto vinRequestDto) throws IOException, DafException {
+    public Vin getVin(VinRequestDto vinRequestDto) throws DafException {
         LOGGER.debug("getVin() started. parameter: {}", vinRequestDto.getCode());
 
         Map<String, String> params = new HashMap<>();
         params.put("inputText", vinRequestDto.getCode());
 
-//
-//        URIBuilder builder = new URIBuilder(urlCheckVin);
-//        builder.setParameter("inputText", vinRequestDto.getCode());
-//        HttpGet httpGet = new HttpGet(builder.build());
-
-
         HttpGet httpGet = setUpGetRequest(urlCheckVin, params);
-
-
         setHeadersOnGetRequest(httpGet);
 
         try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
@@ -155,19 +146,23 @@ public class CatalogDaoImpl implements CatalogDao {
             String responseBodyJson = EntityUtils.toString(entity);
             LOGGER.debug("Response body: {}", responseBodyJson);
             return gson.fromJson(responseBodyJson, Vin.class);
+        } catch (IOException e) {
+            LOGGER.info("{}", e.getMessage());
+            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
+            dex.initCause(e);
+            throw dex;
         }
     }
 
     @Override
-    public Vehicle getVehicle(VehicleRequestDto vehicleRequestDto) throws URISyntaxException, IOException {
+    public Vehicle getVehicle(VehicleRequestDto vehicleRequestDto) throws DafException {
         LOGGER.debug("getVehicle started. Parameter {}", vehicleRequestDto.getSearchedVin());
 
-        URIBuilder builder = new URIBuilder(urlVehicle);
-        builder.setParameter("searchedVin", vehicleRequestDto.getSearchedVin()).setParameter("languageCode", language);
+        Map<String, String> params = new HashMap<>();
+        params.put("searchedVin", vehicleRequestDto.getSearchedVin());
+        params.put("languageCode", language);
 
-        LOGGER.debug("getVehicle started. URL: {}", builder.build().toString());
-
-        HttpGet httpGet = new HttpGet(builder.build());
+        HttpGet httpGet = setUpGetRequest(urlVehicle, params);
         setHeadersOnGetRequest(httpGet);
 
         try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
@@ -175,94 +170,104 @@ public class CatalogDaoImpl implements CatalogDao {
             HttpEntity entity = response.getEntity();
             String responseBodyJson = EntityUtils.toString(entity);
             return gson.fromJson(responseBodyJson, Vehicle.class);
+        } catch (IOException e) {
+            LOGGER.info("{}", e.getMessage());
+            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
+            dex.initCause(e);
+            throw dex;
         }
     }
 
     @Override
-    public Collection<MainGroup> getMainGroupsCollection(MainGroupRequestDto mainGroupRequestDto) throws URISyntaxException, IOException {
+    public Collection<MainGroup> getMainGroupsCollection(MainGroupRequestDto mainGroupRequestDto) throws DafException {
         LOGGER.debug("getMainGroupsCollection started. Parameter {}", mainGroupRequestDto.getSearchedVin());
 
-        URIBuilder builder = new URIBuilder(urlMainGroups);
-        builder.setParameter("searchedVin", mainGroupRequestDto.getSearchedVin()).setParameter("languageCode", language);
+        Map<String, String> params = new HashMap<>();
+        params.put("searchedVin", mainGroupRequestDto.getSearchedVin());
+        params.put("languageCode", language);
 
-        LOGGER.debug("getMainGroupsCollection started. URL: {}", builder.build().toString());
-
-        HttpGet httpGet = new HttpGet(builder.build());
+        HttpGet httpGet = setUpGetRequest(urlMainGroups, params);
         setHeadersOnGetRequest(httpGet);
 
         try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
             LOGGER.debug("Recieved response: {}", response.getStatusLine());
             HttpEntity entity = response.getEntity();
             String responseBodyJson = EntityUtils.toString(entity);
-            //LOGGER.debug("Recieved response BODY {}", responseBodyJson);
             Type collectionType = new TypeToken<Collection<MainGroup>>() {
             }.getType();
             Collection<MainGroup> collection = gson.fromJson(responseBodyJson, collectionType);
             return collection;
+        } catch (IOException e) {
+            LOGGER.info("{}", e.getMessage());
+            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
+            dex.initCause(e);
+            throw dex;
         }
     }
 
     @Override
-    public Collection<Component> getComponentsCollection(ComponentRequestDto componentRequestDto) throws URISyntaxException, IOException {
+    public Collection<Component> getComponentsCollection(ComponentRequestDto componentRequestDto) throws DafException {
         LOGGER.debug("getComponentsCollection started. Parameters: {}, {}, {}", componentRequestDto.getSearchedVin(), language, componentRequestDto.getMainGroupId());
 
-        URIBuilder builder = new URIBuilder(urlComponents);
-        URI uri = builder.setParameter("searchedVin", componentRequestDto.getSearchedVin())
-                .setParameter("languageCode", language)
-                .setParameter("mainGroupId", componentRequestDto.getMainGroupId())
-                .build();
+        Map<String, String> params = new HashMap<>();
+        params.put("searchedVin", componentRequestDto.getSearchedVin());
+        params.put("languageCode", language);
+        params.put("mainGroupId", componentRequestDto.getMainGroupId());
 
-        LOGGER.debug("getComponentsCollection URL: {}", uri.toString());
-
-        HttpGet httpGet = new HttpGet(uri);
+        HttpGet httpGet = setUpGetRequest(urlComponents, params);
         setHeadersOnGetRequest(httpGet);
 
         try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
             LOGGER.debug("Recieved response: {}", response.getStatusLine());
             HttpEntity entity = response.getEntity();
             String responseBodyJson = EntityUtils.toString(entity);
-            //LOGGER.debug("Recieved response BODY {}", responseBodyJson);
             Type collectionType = new TypeToken<Collection<Component>>() {
             }.getType();
             Collection<Component> collection = gson.fromJson(responseBodyJson, collectionType);
             return collection;
+        } catch (IOException e) {
+            LOGGER.info("{}", e.getMessage());
+            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
+            dex.initCause(e);
+            throw dex;
         }
     }
 
     @Override
-    public Collection<Job> getJobsCollection(JobRequestDto jobRequestDto) throws URISyntaxException, IOException {
+    public Collection<Job> getJobsCollection(JobRequestDto jobRequestDto) throws DafException {
         LOGGER.debug("getJobs() started. Parameters: {}, {}, {}, {}, {}", jobRequestDto.getVin()
                 , jobRequestDto.getCompNumber()
                 , jobRequestDto.getCompNumberVersion()
                 , jobRequestDto.getComponentGroup()
                 , jobRequestDto.getDrawingIndex());
 
-        URIBuilder builder = new URIBuilder(urlJobs);
-        URI uri = builder.setParameter("vin", jobRequestDto.getVin())
-                .setParameter("compNumber", jobRequestDto.getCompNumber())
-                .setParameter("compNumberVersion", jobRequestDto.getCompNumberVersion())
-                .setParameter("componentGroup", jobRequestDto.getComponentGroup())
-                .setParameter("languageCode", language)
-                .setParameter("drawingIndex", jobRequestDto.getDrawingIndex())
-                .setParameter("isLDrawing", "undefined")
-                .build();
+        Map<String, String> params = new HashMap<>();
+        params.put("vin", jobRequestDto.getVin());
+        params.put("compNumber", jobRequestDto.getCompNumber());
+        params.put("compNumberVersion", jobRequestDto.getCompNumberVersion());
+        params.put("componentGroup", jobRequestDto.getComponentGroup());
+        params.put("languageCode", language);
+        params.put("drawingIndex", jobRequestDto.getDrawingIndex());
+        params.put("isLDrawing", "undefined");
 
-        LOGGER.debug("getJobs() URL: {}", uri.toString());
-
-        HttpGet httpGet = new HttpGet(uri);
+        HttpGet httpGet = setUpGetRequest(urlJobs, params);
         setHeadersOnGetRequest(httpGet);
 
         try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
             LOGGER.debug("Recieved response: {}", response.getStatusLine());
             HttpEntity entity = response.getEntity();
             String responseBodyJson = EntityUtils.toString(entity);
-            //LOGGER.debug("Recieved response BODY {}", responseBodyJson);
 
             Type collectionType = new TypeToken<Collection<Job>>() {
             }.getType();
             Collection<Job> collection = gson.fromJson(responseBodyJson, collectionType);
 
             return collection;
+        } catch (IOException e) {
+            LOGGER.info("{}", e.getMessage());
+            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
+            dex.initCause(e);
+            throw dex;
         }
     }
 
