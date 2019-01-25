@@ -13,7 +13,7 @@ public interface CatalogDao {
 
     int login(LoginInfo loginInfo) throws DafException;
 
-    Vin getVin(VinRequestDto vinRequestDto) throws IOException, URISyntaxException;
+    Vin getVin(VinRequestDto vinRequestDto) throws IOException, URISyntaxException, DafException;
 
     Vehicle getVehicle(VehicleRequestDto vehicleRequestDto) throws URISyntaxException, IOException;
 

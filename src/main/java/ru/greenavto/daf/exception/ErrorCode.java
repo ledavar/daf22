@@ -4,7 +4,9 @@ public enum ErrorCode {
 
     WRONG_VIN("Cant get VIN by code %s."),
     WRONG_ENCODING("Request body encoding is invalid"),
+    WRONG_URI_SYNTAX("Wrong URI syntax: %s"),
     NO_LOGIN("Cant perform login request: %s"),
+
     NO_PROPERTIES("Cant get properties fils %s");
 
 

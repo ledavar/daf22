@@ -41,9 +41,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class CatalogDaoImpl implements CatalogDao {
 
@@ -134,15 +132,21 @@ public class CatalogDaoImpl implements CatalogDao {
     }
 
     @Override
-    public Vin getVin(VinRequestDto vinRequestDto) throws IOException, URISyntaxException {
+    public Vin getVin(VinRequestDto vinRequestDto) throws IOException, DafException {
         LOGGER.debug("getVin() started. parameter: {}", vinRequestDto.getCode());
 
-        URIBuilder builder = new URIBuilder(urlCheckVin);
-        builder.setParameter("inputText", vinRequestDto.getCode());
+        Map<String, String> params = new HashMap<>();
+        params.put("inputText", vinRequestDto.getCode());
 
-        LOGGER.debug("getVin() started. URL: {}", builder.build().toString());
+//
+//        URIBuilder builder = new URIBuilder(urlCheckVin);
+//        builder.setParameter("inputText", vinRequestDto.getCode());
+//        HttpGet httpGet = new HttpGet(builder.build());
 
-        HttpGet httpGet = new HttpGet(builder.build());
+
+        HttpGet httpGet = setUpGetRequest(urlCheckVin, params);
+
+
         setHeadersOnGetRequest(httpGet);
 
         try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
@@ -269,6 +273,23 @@ public class CatalogDaoImpl implements CatalogDao {
         httpGet.setHeader(HOST_HEADER, host);
         httpGet.setHeader(CONTENT_TYPE, contentType);
         httpGet.setHeader(USER_AGENT, userAgent);
+    }
+
+    private HttpGet setUpGetRequest(String url, Map<String, String> paramMap) throws DafException {
+        try {
+            URIBuilder builder = new URIBuilder(url);
+            for (Map.Entry<String, String> param : paramMap.entrySet()) {
+                builder.setParameter(param.getKey(), param.getValue());
+            }
+            URI uri = builder.build();
+            LOGGER.debug("URL: {}", uri);
+            return new HttpGet(uri);
+        } catch (URISyntaxException e) {
+            LOGGER.info("URI syntax exception, {}", e.getMessage());
+            DafException dex = new DafException(ErrorCode.WRONG_URI_SYNTAX, url);
+            dex.initCause(e);
+            throw dex;
+        }
     }
 
 
