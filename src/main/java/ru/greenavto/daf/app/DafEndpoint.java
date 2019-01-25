@@ -7,14 +7,10 @@ import org.slf4j.LoggerFactory;
 import ru.greenavto.daf.dao.CatalogDaoImpl;
 import ru.greenavto.daf.exception.DafException;
 import ru.greenavto.daf.gson.error.ErrorResponse;
-import ru.greenavto.daf.gson.serializer.vehicle.AttributeSerializer;
-import ru.greenavto.daf.gson.serializer.vehicle.VehicleSerializer;
-import ru.greenavto.daf.gson.serializer.vin.VinSerializer;
 import ru.greenavto.daf.model.Component;
 import ru.greenavto.daf.model.LoginInfo;
+import ru.greenavto.daf.model.MainGroup;
 import ru.greenavto.daf.model.Vin;
-import ru.greenavto.daf.model.vehicle.Attribute;
-import ru.greenavto.daf.model.vehicle.Vehicle;
 import ru.greenavto.daf.service.DafService;
 import ru.greenavto.daf.service.DafServiceImpl;
 
@@ -27,12 +23,7 @@ public class DafEndpoint {
 
     public DafEndpoint() {
         this.dafService = new DafServiceImpl(new CatalogDaoImpl());
-        gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Attribute.class, new AttributeSerializer())
-                .registerTypeAdapter(Vehicle.class, new VehicleSerializer())
-                .registerTypeAdapter(Vin.class, new VinSerializer())
-                .create();
+        gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     public String login(String userName, String password) {
@@ -63,13 +54,18 @@ public class DafEndpoint {
         }
     }
 
-    public String getVehicle(String request) throws DafException {
-        return gson.toJson(dafService.getVehicle(request));
+    public String getVehicle(String request) {
+        try {
+            return gson.toJson(dafService.getVehicle(request));
+        } catch (DafException e) {
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+            return gson.toJson(errorResponse);
+        }
     }
 
-    public String getComponentsCollection(String wmi, String id) {
+    public String getComponentsCollection(Vin vin, MainGroup mainGroup) {
         try {
-            return gson.toJson(dafService.getComponentsCollection(wmi, id));
+            return gson.toJson(dafService.getComponentsCollection(vin, mainGroup));
         } catch (DafException e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
             return gson.toJson(errorResponse);

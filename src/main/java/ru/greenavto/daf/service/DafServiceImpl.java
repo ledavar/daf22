@@ -51,8 +51,8 @@ public class DafServiceImpl implements DafService {
     }
 
     @Override
-    public Collection<Component> getComponentsCollection(String wmi, String id) throws DafException {
-        ComponentRequestDto componentRequestDto = new ComponentRequestDto(wmi, id);
+    public Collection<Component> getComponentsCollection(Vin vin, MainGroup mainGroup) throws DafException {
+        ComponentRequestDto componentRequestDto = new ComponentRequestDto(vin.getWmi(), mainGroup.getId());
         return catalogDao.getComponentsCollection(componentRequestDto);
     }
 

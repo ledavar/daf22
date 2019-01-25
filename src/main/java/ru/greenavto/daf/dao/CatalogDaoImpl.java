@@ -144,7 +144,6 @@ public class CatalogDaoImpl implements CatalogDao {
             LOGGER.debug("Recieved response: {}", response.getStatusLine());
             HttpEntity entity = response.getEntity();
             String responseBodyJson = EntityUtils.toString(entity);
-            LOGGER.debug("Response body: {}", responseBodyJson);
             return gson.fromJson(responseBodyJson, Vin.class);
         } catch (IOException e) {
             LOGGER.info("{}", e.getMessage());

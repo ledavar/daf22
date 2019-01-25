@@ -19,7 +19,7 @@ public interface DafService {
 
     Collection<MainGroup> getMainGroupsCollection(String request) throws DafException;
 
-    Collection<Component> getComponentsCollection(String wmi, String id) throws DafException;
+    Collection<Component> getComponentsCollection(Vin vin, MainGroup mainGroup) throws DafException;
 
     Collection<Job> getJobsCollection(Vin vin, Component component) throws DafException;
 
