@@ -23,4 +23,7 @@
 
 application.properties
 
+src/main/resources/application.properties
+/src/main/**/*.properties
+
 bash.exe.stackdump
