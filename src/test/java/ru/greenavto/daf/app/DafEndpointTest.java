@@ -6,7 +6,12 @@ import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.greenavto.daf.dao.CatalogDao;
+import ru.greenavto.daf.dao.CatalogDaoImpl;
+import ru.greenavto.daf.dto.DetailedJobRequestDto;
+import ru.greenavto.daf.exception.DafException;
 import ru.greenavto.daf.model.Component;
+import ru.greenavto.daf.model.Job;
 import ru.greenavto.daf.model.MainGroup;
 import ru.greenavto.daf.model.Vin;
 import ru.greenavto.daf.util.PropertiesReader;
@@ -241,5 +246,53 @@ public class DafEndpointTest {
             LOGGER.debug("{}", jobsString);
         }
     }
+
+    @Test
+    public void testDetailedJobs() throws DafException {
+        if (SUCCESS.equals(dafEndpoint.login(PropertiesReader.getUserName(), PropertiesReader.getPassword()))) {
+            // get Vin
+            String vinString = dafEndpoint.getVin(code);
+            assertTrue(vinString.contains("OKVIN"));
+            Vin vin = gson.fromJson(vinString, Vin.class);
+
+            // get main groups by vin
+            String groupsString = dafEndpoint.getMainGroups(vin.getWmi());
+            assertTrue(groupsString.contains("0100"));
+            assertTrue(groupsString.contains("0200"));
+            Type collectionType;
+            collectionType = new TypeToken<Collection<MainGroup>>() {
+            }.getType();
+            Collection<MainGroup> mainGroupCollection = gson.fromJson(groupsString, collectionType);
+            assertTrue(mainGroupCollection.size() != 0);
+
+            // get Components by collection[0] MainGroup
+            MainGroup mainGroup = new ArrayList<>(mainGroupCollection).get(0);
+            String componentsString = dafEndpoint.getComponentsCollection(vin, mainGroup);
+            collectionType = new TypeToken<Collection<Component>>() {
+            }.getType();
+            Collection<Component> componentCollection = gson.fromJson(componentsString, collectionType);
+            assertTrue(componentCollection.size() != 0);
+
+            // get Jobs by collection[0] Components
+            Component component = new ArrayList<>(componentCollection).get(0);
+            String jobsString = dafEndpoint.getJobsCollection(vin, component);
+
+            collectionType = new TypeToken<Collection<Job>>() {
+            }.getType();
+            Collection<Job> jobsCollection = gson.fromJson(jobsString, collectionType);
+            assertTrue(jobsCollection.size() != 0);
+
+            // get details of job = jobsCollection[0]
+            Job job = new ArrayList<>(jobsCollection).get(0);
+
+            // instantiate CatalogDao
+            CatalogDao catalogDao = new CatalogDaoImpl();
+            String detailedJobs = catalogDao.getDetailedJobs(new DetailedJobRequestDto(vin.getWmi(), job.getKey()));
+            LOGGER.debug("Detailed job: {}", detailedJobs);
+        }
+
+
+    }
+
 
 }

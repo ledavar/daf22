@@ -267,6 +267,36 @@ public class CatalogDaoImpl implements CatalogDao {
         }
     }
 
+    @Override
+    public String getDetailedJobs(DetailedJobRequestDto detailedJobRequestDto) throws DafException {
+        LOGGER.debug("getDetailedJobs started. Parameters: {}, {}", detailedJobRequestDto.getVin(), detailedJobRequestDto.getJobId());
+
+        Map<String, String> params = new HashMap<>();
+        params.put("vin", detailedJobRequestDto.getVin());
+        params.put("languageCode", language);
+        params.put("jobId", detailedJobRequestDto.getJobId());
+
+        HttpGet httpGet = setUpGetRequest(PropertiesReader.getUrlDetailedJobs(), params);
+        setHeadersOnGetRequest(httpGet);
+
+        try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
+            LOGGER.debug("Recieved response: {}", response.getStatusLine());
+            HttpEntity entity = response.getEntity();
+            String responseBodyJson = EntityUtils.toString(entity);
+            LOGGER.debug("RESPONSE BODY {}", responseBodyJson);
+            /*Type collectionType = new TypeToken<Collection<Job>>() {
+            }.getType();
+
+            return gson.fromJson(responseBodyJson, collectionType);*/
+        } catch (IOException e) {
+            LOGGER.info("{}", e.getMessage());
+            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
+            dex.initCause(e);
+            throw dex;
+        }
+        return null;
+    }
+
     private void setHeadersOnGetRequest(HttpGet httpGet) {
         String host = "eportal.daf.com";
         String contentType = "application/x-www-form-urlencoded";

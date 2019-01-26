@@ -21,4 +21,6 @@ public interface CatalogDao {
 
     Collection<Job> getJobsCollection(JobRequestDto jobRequestDto) throws DafException;
 
+    String getDetailedJobs(DetailedJobRequestDto detailedJobRequestDto) throws DafException;
+
 }

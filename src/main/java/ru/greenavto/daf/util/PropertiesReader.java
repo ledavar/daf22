@@ -60,6 +60,8 @@ public class PropertiesReader {
 
     public static String getUrlJobs() {return prop.getProperty("urlJobs");}
 
+    public static String getUrlDetailedJobs() {return prop.getProperty("urlDetailedJob");}
+
     // here goes KOSTYL
 
     public static String[] getUrlLogins() {
