@@ -62,7 +62,6 @@ public class CatalogDaoImpl implements CatalogDao {
             .registerTypeAdapter(Job.class, new JobDeserializer())
             .create();
 
-    private static String curl = "Z2F";
     private static String site = PropertiesReader.getSite();
     private static String urlCheckVin = PropertiesReader.getUrlCheckVin();
     private static String urlVehicle = PropertiesReader.getUrlVehicle();
@@ -92,6 +91,7 @@ public class CatalogDaoImpl implements CatalogDao {
         List<NameValuePair> formParams = new ArrayList<>();
         formParams.add(new BasicNameValuePair("username", loginInfo.getUsername()));
         formParams.add(new BasicNameValuePair("password", loginInfo.getPassword()));
+        String curl = "Z2F";
         formParams.add(new BasicNameValuePair("curl", curl));
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(formParams));
@@ -194,8 +194,7 @@ public class CatalogDaoImpl implements CatalogDao {
             String responseBodyJson = EntityUtils.toString(entity);
             Type collectionType = new TypeToken<Collection<MainGroup>>() {
             }.getType();
-            Collection<MainGroup> collection = gson.fromJson(responseBodyJson, collectionType);
-            return collection;
+            return gson.fromJson(responseBodyJson, collectionType);
         } catch (IOException e) {
             LOGGER.info("{}", e.getMessage());
             DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
@@ -222,8 +221,7 @@ public class CatalogDaoImpl implements CatalogDao {
             String responseBodyJson = EntityUtils.toString(entity);
             Type collectionType = new TypeToken<Collection<Component>>() {
             }.getType();
-            Collection<Component> collection = gson.fromJson(responseBodyJson, collectionType);
-            return collection;
+            return gson.fromJson(responseBodyJson, collectionType);
         } catch (IOException e) {
             LOGGER.info("{}", e.getMessage());
             DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
@@ -259,9 +257,8 @@ public class CatalogDaoImpl implements CatalogDao {
 
             Type collectionType = new TypeToken<Collection<Job>>() {
             }.getType();
-            Collection<Job> collection = gson.fromJson(responseBodyJson, collectionType);
 
-            return collection;
+            return gson.fromJson(responseBodyJson, collectionType);
         } catch (IOException e) {
             LOGGER.info("{}", e.getMessage());
             DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
