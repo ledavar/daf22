@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 import ru.greenavto.daf.dao.CatalogDaoImpl;
 import ru.greenavto.daf.exception.DafException;
 import ru.greenavto.daf.gson.error.ErrorResponse;
-import ru.greenavto.daf.model.Component;
-import ru.greenavto.daf.model.LoginInfo;
-import ru.greenavto.daf.model.MainGroup;
-import ru.greenavto.daf.model.Vin;
+import ru.greenavto.daf.model.*;
 import ru.greenavto.daf.service.DafService;
 import ru.greenavto.daf.service.DafServiceImpl;
 
@@ -91,5 +88,14 @@ public class DafEndpoint {
         }
     }
 
+    public String getDetailedJob(Vin vin, Job job) {
+        try {
+            return gson.toJson(dafService.getDetailedJob(vin, job));
+        } catch (DafException e) {
+            LOGGER.info("{}", e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+            return gson.toJson(errorResponse);
+        }
+    }
 
 }

@@ -85,4 +85,11 @@ public class DafServiceImpl implements DafService {
 
         return mainGroupCollection;
     }
+
+    @Override
+    public String getDetailedJob(Vin vin, Job job) throws DafException {
+        DetailedJobRequestDto detailedJobRequestDto = new DetailedJobRequestDto(vin.getWmi(), job.getKey());
+
+        return catalogDao.getDetailedJobs(detailedJobRequestDto);
+    }
 }

@@ -283,18 +283,18 @@ public class CatalogDaoImpl implements CatalogDao {
             LOGGER.debug("Recieved response: {}", response.getStatusLine());
             HttpEntity entity = response.getEntity();
             String responseBodyJson = EntityUtils.toString(entity);
-            LOGGER.debug("RESPONSE BODY {}", responseBodyJson);
+            LOGGER.debug("Response body: {}", responseBodyJson);
             /*Type collectionType = new TypeToken<Collection<Job>>() {
             }.getType();
 
             return gson.fromJson(responseBodyJson, collectionType);*/
+            return "Smotri BODY";
         } catch (IOException e) {
             LOGGER.info("{}", e.getMessage());
             DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
             dex.initCause(e);
             throw dex;
         }
-        return null;
     }
 
     private void setHeadersOnGetRequest(HttpGet httpGet) {

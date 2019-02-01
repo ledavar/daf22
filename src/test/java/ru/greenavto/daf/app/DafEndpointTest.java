@@ -284,10 +284,7 @@ public class DafEndpointTest {
 
             // get details of job = jobsCollection[0]
             Job job = new ArrayList<>(jobsCollection).get(0);
-
-            // instantiate CatalogDao
-            CatalogDao catalogDao = new CatalogDaoImpl();
-            String detailedJobs = catalogDao.getDetailedJobs(new DetailedJobRequestDto(vin.getWmi(), job.getKey()));
+            String detailedJobs = dafEndpoint.getDetailedJob(vin, job);
             LOGGER.debug("Detailed job: {}", detailedJobs);
         }
 

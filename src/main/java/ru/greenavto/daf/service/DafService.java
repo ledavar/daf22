@@ -23,4 +23,8 @@ public interface DafService {
 
     Collection<Job> getJobsCollection(Vin vin, Component component) throws DafException;
 
+
+    // TEST
+    String getDetailedJob(Vin vin, Job job) throws DafException;
+
 }
