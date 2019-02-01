@@ -307,9 +307,11 @@ public class CatalogDaoImpl implements CatalogDao {
     }
 
     private HttpGet setUpGetRequest(String url, Map<String, String> paramMap) throws DafException {
+        LOGGER.debug("setUpGetRequest parameter url: {}", url);
         try {
             URIBuilder builder = new URIBuilder(url);
             for (Map.Entry<String, String> param : paramMap.entrySet()) {
+                LOGGER.debug("setUpGetRequest param map key : value, {} : {}", param.getKey(), param.getValue());
                 builder.setParameter(param.getKey(), param.getValue());
             }
             URI uri = builder.build();
