@@ -7,6 +7,7 @@ import ru.greenavto.daf.dto.*;
 import ru.greenavto.daf.exception.DafException;
 import ru.greenavto.daf.exception.ErrorCode;
 import ru.greenavto.daf.model.*;
+import ru.greenavto.daf.model.detailedjob.DetailedJob;
 import ru.greenavto.daf.model.vehicle.Vehicle;
 
 import java.util.ArrayList;
@@ -87,9 +88,8 @@ public class DafServiceImpl implements DafService {
     }
 
     @Override
-    public String getDetailedJob(Vin vin, Job job) throws DafException {
+    public Collection<DetailedJob> getDetailedJobCollection(Vin vin, Job job) throws DafException {
         DetailedJobRequestDto detailedJobRequestDto = new DetailedJobRequestDto(vin.getWmi(), job.getKey());
-
-        return catalogDao.getDetailedJobs(detailedJobRequestDto);
+        return catalogDao.getDetailedJobsCollection(detailedJobRequestDto);
     }
 }

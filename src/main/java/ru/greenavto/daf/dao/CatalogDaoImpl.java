@@ -22,6 +22,8 @@ import ru.greenavto.daf.dto.*;
 import ru.greenavto.daf.exception.DafException;
 import ru.greenavto.daf.exception.ErrorCode;
 import ru.greenavto.daf.gson.deserializer.component.ComponentDeserializer;
+import ru.greenavto.daf.gson.deserializer.detailedjob.DetailedJobDeserializer;
+import ru.greenavto.daf.gson.deserializer.detailedjob.PartConsumptionDeserializer;
 import ru.greenavto.daf.gson.deserializer.job.JobDeserializer;
 import ru.greenavto.daf.gson.deserializer.maingroup.MainGroupDeserializer;
 import ru.greenavto.daf.gson.deserializer.vehicle.AttributeDeserializer;
@@ -30,6 +32,8 @@ import ru.greenavto.daf.gson.deserializer.vehicle.DescriptionDeserializer;
 import ru.greenavto.daf.gson.deserializer.vehicle.VehicleDeserializer;
 import ru.greenavto.daf.gson.deserializer.vin.VinDeserializer;
 import ru.greenavto.daf.model.*;
+import ru.greenavto.daf.model.detailedjob.DetailedJob;
+import ru.greenavto.daf.model.detailedjob.PartConsumption;
 import ru.greenavto.daf.model.vehicle.Attribute;
 import ru.greenavto.daf.model.vehicle.AttributeGroup;
 import ru.greenavto.daf.model.vehicle.Description;
@@ -60,6 +64,8 @@ public class CatalogDaoImpl implements CatalogDao {
             .registerTypeAdapter(Vin.class, new VinDeserializer())
             .registerTypeAdapter(Component.class, new ComponentDeserializer())
             .registerTypeAdapter(Job.class, new JobDeserializer())
+            .registerTypeAdapter(PartConsumption.class, new PartConsumptionDeserializer())
+            .registerTypeAdapter(DetailedJob.class, new DetailedJobDeserializer())
             .create();
 
     private static String site = PropertiesReader.getSite();
@@ -268,7 +274,7 @@ public class CatalogDaoImpl implements CatalogDao {
     }
 
     @Override
-    public String getDetailedJobs(DetailedJobRequestDto detailedJobRequestDto) throws DafException {
+    public Collection<DetailedJob> getDetailedJobsCollection(DetailedJobRequestDto detailedJobRequestDto) throws DafException {
         LOGGER.debug("getDetailedJobs started. Parameters: {}, {}", detailedJobRequestDto.getVin(), detailedJobRequestDto.getJobId());
 
         Map<String, String> params = new HashMap<>();
@@ -283,12 +289,9 @@ public class CatalogDaoImpl implements CatalogDao {
             LOGGER.debug("Recieved response: {}", response.getStatusLine());
             HttpEntity entity = response.getEntity();
             String responseBodyJson = EntityUtils.toString(entity);
-            LOGGER.debug("Response body: {}", responseBodyJson);
-            /*Type collectionType = new TypeToken<Collection<Job>>() {
+            Type collectionType = new TypeToken<Collection<DetailedJob>>() {
             }.getType();
-
-            return gson.fromJson(responseBodyJson, collectionType);*/
-            return "Smotri BODY";
+            return gson.fromJson(responseBodyJson, collectionType);
         } catch (IOException e) {
             LOGGER.info("{}", e.getMessage());
             DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);

@@ -3,6 +3,7 @@ package ru.greenavto.daf.dao;
 import ru.greenavto.daf.dto.*;
 import ru.greenavto.daf.exception.DafException;
 import ru.greenavto.daf.model.*;
+import ru.greenavto.daf.model.detailedjob.DetailedJob;
 import ru.greenavto.daf.model.vehicle.Vehicle;
 
 import java.util.Collection;
@@ -21,8 +22,6 @@ public interface CatalogDao {
 
     Collection<Job> getJobsCollection(JobRequestDto jobRequestDto) throws DafException;
 
-
-    // TEST
-    String getDetailedJobs(DetailedJobRequestDto detailedJobRequestDto) throws DafException;
+    Collection<DetailedJob> getDetailedJobsCollection(DetailedJobRequestDto detailedJobRequestDto) throws DafException;
 
 }

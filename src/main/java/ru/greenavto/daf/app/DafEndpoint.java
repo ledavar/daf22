@@ -90,12 +90,13 @@ public class DafEndpoint {
 
     public String getDetailedJob(Vin vin, Job job) {
         try {
-            return gson.toJson(dafService.getDetailedJob(vin, job));
+            return gson.toJson(dafService.getDetailedJobCollection(vin, job));
         } catch (DafException e) {
             LOGGER.info("{}", e.getMessage());
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
             return gson.toJson(errorResponse);
         }
     }
+
 
 }

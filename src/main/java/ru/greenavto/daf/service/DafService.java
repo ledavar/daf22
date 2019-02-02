@@ -2,6 +2,7 @@ package ru.greenavto.daf.service;
 
 import ru.greenavto.daf.exception.DafException;
 import ru.greenavto.daf.model.*;
+import ru.greenavto.daf.model.detailedjob.DetailedJob;
 import ru.greenavto.daf.model.vehicle.Vehicle;
 
 import java.util.Collection;
@@ -23,8 +24,6 @@ public interface DafService {
 
     Collection<Job> getJobsCollection(Vin vin, Component component) throws DafException;
 
-
-    // TEST
-    String getDetailedJob(Vin vin, Job job) throws DafException;
+    Collection<DetailedJob> getDetailedJobCollection(Vin vin, Job job) throws DafException;
 
 }

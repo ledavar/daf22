@@ -1,5 +1,6 @@
 package ru.greenavto.daf.model.detailedjob;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DetailedJob {
@@ -10,15 +11,37 @@ public class DetailedJob {
     private String key;
     private String componentRef;
     private String componentRefVersion;
-    private int duration;
+    private double duration;
     private String durationTime;
     private boolean isFolder;
     private boolean isExpanded;
     private Boolean isLazy;
     private List<DetailedJob> children;
-    private PartConsumption partConsumption;
+    private List<PartConsumption> partConsumptions;
+    private List<String> specialTools;
 
     public DetailedJob() {
+    }
+
+    public void addChild(DetailedJob child) {
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+        children.add(child);
+    }
+
+    public void addPartConsumption(PartConsumption partConsumption) {
+        if (partConsumptions == null) {
+            partConsumptions = new ArrayList<>();
+        }
+        partConsumptions.add(partConsumption);
+    }
+
+    public void addSpecialTool(String tool) {
+        if (specialTools == null) {
+            specialTools = new ArrayList<>();
+        }
+        specialTools.add(tool);
     }
 
     public String getTitle() {
@@ -69,11 +92,11 @@ public class DetailedJob {
         this.componentRefVersion = componentRefVersion;
     }
 
-    public int getDuration() {
+    public double getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(double duration) {
         this.duration = duration;
     }
 
@@ -117,11 +140,19 @@ public class DetailedJob {
         this.children = children;
     }
 
-    public PartConsumption getPartConsumption() {
-        return partConsumption;
+    public List<PartConsumption> getPartConsumptions() {
+        return partConsumptions;
     }
 
-    public void setPartConsumption(PartConsumption partConsumption) {
-        this.partConsumption = partConsumption;
+    public void setPartConsumptions(List<PartConsumption> partConsumptions) {
+        this.partConsumptions = partConsumptions;
+    }
+
+    public List<String> getSpecialTools() {
+        return specialTools;
+    }
+
+    public void setSpecialTools(List<String> specialTools) {
+        this.specialTools = specialTools;
     }
 }
