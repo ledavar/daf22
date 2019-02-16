@@ -22,19 +22,12 @@ import org.slf4j.LoggerFactory;
 import ru.greenavto.daf.dto.*;
 import ru.greenavto.daf.exception.DafException;
 import ru.greenavto.daf.exception.ErrorCode;
-import ru.greenavto.daf.gson.deserializer.component.ComponentDeserializer;
-import ru.greenavto.daf.gson.deserializer.detailedjob.DetailedJobDeserializer;
-import ru.greenavto.daf.gson.deserializer.detailedjob.PartConsumptionDeserializer;
-import ru.greenavto.daf.gson.deserializer.job.JobDeserializer;
-import ru.greenavto.daf.gson.deserializer.maingroup.MainGroupDeserializer;
 import ru.greenavto.daf.gson.deserializer.vehicle.AttributeDeserializer;
 import ru.greenavto.daf.gson.deserializer.vehicle.AttributeGroupDeserializer;
 import ru.greenavto.daf.gson.deserializer.vehicle.DescriptionDeserializer;
 import ru.greenavto.daf.gson.deserializer.vehicle.VehicleDeserializer;
-import ru.greenavto.daf.gson.deserializer.vin.VinDeserializer;
 import ru.greenavto.daf.model.*;
 import ru.greenavto.daf.model.detailedjob.DetailedJob;
-import ru.greenavto.daf.model.detailedjob.PartConsumption;
 import ru.greenavto.daf.model.vehicle.Attribute;
 import ru.greenavto.daf.model.vehicle.AttributeGroup;
 import ru.greenavto.daf.model.vehicle.Description;
@@ -61,12 +54,6 @@ public class CatalogDaoImpl implements CatalogDao {
             .registerTypeAdapter(Description.class, new DescriptionDeserializer())
             .registerTypeAdapter(AttributeGroup.class, new AttributeGroupDeserializer())
             .registerTypeAdapter(Vehicle.class, new VehicleDeserializer())
-            .registerTypeAdapter(MainGroup.class, new MainGroupDeserializer())
-            .registerTypeAdapter(Vin.class, new VinDeserializer())
-            .registerTypeAdapter(Component.class, new ComponentDeserializer())
-            .registerTypeAdapter(Job.class, new JobDeserializer())
-            .registerTypeAdapter(PartConsumption.class, new PartConsumptionDeserializer())
-            .registerTypeAdapter(DetailedJob.class, new DetailedJobDeserializer())
             .create();
 
     private static String site = PropertiesReader.getSite();
@@ -242,6 +229,7 @@ public class CatalogDaoImpl implements CatalogDao {
         setHeadersOnGetRequest(httpGet);
 
         String result = performGetRequest(httpGet);
+        //LOGGER.debug("RESPONSE BODY {}", result);
         Type collectionType = new TypeToken<Collection<DetailedJob>>() {
         }.getType();
         return gson.fromJson(result, collectionType);
@@ -251,7 +239,7 @@ public class CatalogDaoImpl implements CatalogDao {
         try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
             HttpEntity entity = response.getEntity();
             if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                throw new DafException(ErrorCode.BAD_RESPONSE, String.valueOf(response.getStatusLine().getStatusCode()));
+                throw new DafException(ErrorCode.BAD_RESPONSE, response.getStatusLine().getStatusCode(), httpGet.getURI().toString());
             }
             return EntityUtils.toString(entity);
         } catch (IOException e) {
@@ -272,7 +260,7 @@ public class CatalogDaoImpl implements CatalogDao {
     }
 
     private HttpGet setUpGetRequest(String url, Map<String, String> paramMap) throws DafException {
-        LOGGER.debug("setUpGetRequest parameter url: {}", url);
+//        LOGGER.debug("setUpGetRequest parameter url: {}", url);
         try {
             URIBuilder builder = new URIBuilder(url);
             for (Map.Entry<String, String> param : paramMap.entrySet()) {

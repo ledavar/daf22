@@ -1,23 +1,40 @@
 package ru.greenavto.daf.model.detailedjob;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DetailedJob {
 
     private String title;
+
     private boolean hasPartsViewer;
+
     private String tooltip;
+
     private String key;
+
     private String componentRef;
+
     private String componentRefVersion;
+
     private double duration;
+
     private String durationTime;
+
     private boolean isFolder;
+
     private boolean isExpanded;
+
     private Boolean isLazy;
+
+    @SerializedName("children")
     private List<DetailedJob> children;
+    @SerializedName("partsconsumption")
     private List<PartConsumption> partConsumptions;
+    @SerializedName("specialtool")
     private List<String> specialTools;
 
     public DetailedJob() {

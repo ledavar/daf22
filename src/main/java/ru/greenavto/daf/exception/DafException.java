@@ -10,4 +10,12 @@ public class DafException extends Exception {
         super(String.format(errorCode.getMessage(), param));
     }
 
+    public DafException(ErrorCode errorCode, int param) {
+        super(String.format(errorCode.getMessage(), param));
+    }
+
+    public DafException(ErrorCode errorCode, int param, String param1) {
+        super(String.format(errorCode.getMessage(), param, param1));
+    }
+
 }

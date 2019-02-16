@@ -1,12 +1,20 @@
 package ru.greenavto.daf.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Component {
 
+    @SerializedName("ID")
     private String id;
+    @SerializedName("MainGroupId")
     private String mainGroupId;
+    @SerializedName("ComponentReference")
     private String componentReference;
+    @SerializedName("Version")
     private String version;
+    @SerializedName("Description")
     private String description;
+    @SerializedName("Index")
     private String index; // "drawingIndex" parameter in URI
 
     public Component(String id, String mainGroupId, String componentReference, String version, String description, String index) {

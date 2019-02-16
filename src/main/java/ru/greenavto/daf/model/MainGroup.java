@@ -1,11 +1,15 @@
 package ru.greenavto.daf.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainGroup {
 
+    @SerializedName("ID")
     private String id;
+    @SerializedName("Description")
     private String description;
     private List<Component> componentList;
 

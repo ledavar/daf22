@@ -1,13 +1,22 @@
 package ru.greenavto.daf.model.detailedjob;
 
+import com.google.gson.annotations.SerializedName;
+
 public class PartConsumption {
 
+    @SerializedName("PartNumber")
     private String partNumber;
+    @SerializedName("PartsClass")
     private String partsClass;
+    @SerializedName("PartDescription")
     private String partDescription;
+    @SerializedName("CgroupNumber")
     private String cGroupNumber;
+    @SerializedName("CgroupDescription")
     private String cGroupDescription;
+    @SerializedName("Quantity")
     private String quantity;
+    @SerializedName("IsOptional")
     private boolean isOptional;
 
     public PartConsumption() {

@@ -3,8 +3,10 @@ package ru.greenavto.daf.model;
 import com.google.gson.annotations.SerializedName;
 
 public class Vin {
-    
+
+    @SerializedName("result")
     private String result;
+    @SerializedName("WMI")
     private String wmi;
 
     public Vin(String result, String wmi) {

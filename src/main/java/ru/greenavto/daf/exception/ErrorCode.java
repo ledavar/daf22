@@ -7,7 +7,7 @@ public enum ErrorCode {
     WRONG_URI_SYNTAX("Wrong URI syntax: %s"),
     EXECUTE_REQUEST_ERROR("Error during error execution or recieving response body"),
     NO_LOGIN("Cant perform login request: %s"),
-    BAD_RESPONSE("Received response with code %s"),
+    BAD_RESPONSE("Received response with code %d. URI: %s"),
     NO_PROPERTIES("Cant get properties fils %s");
 
 
