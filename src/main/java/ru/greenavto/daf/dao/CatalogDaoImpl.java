@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -146,17 +147,8 @@ public class CatalogDaoImpl implements CatalogDao {
         HttpGet httpGet = setUpGetRequest(urlCheckVin, params);
         setHeadersOnGetRequest(httpGet);
 
-        try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
-            LOGGER.debug("Recieved response: {}", response.getStatusLine());
-            HttpEntity entity = response.getEntity();
-            String responseBodyJson = EntityUtils.toString(entity);
-            return gson.fromJson(responseBodyJson, Vin.class);
-        } catch (IOException e) {
-            LOGGER.info("{}", e.getMessage());
-            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
-            dex.initCause(e);
-            throw dex;
-        }
+        String result = performGetRequest(httpGet);
+        return gson.fromJson(result, Vin.class);
     }
 
     @Override
@@ -170,17 +162,8 @@ public class CatalogDaoImpl implements CatalogDao {
         HttpGet httpGet = setUpGetRequest(urlVehicle, params);
         setHeadersOnGetRequest(httpGet);
 
-        try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
-            LOGGER.debug("Recieved response: {}", response.getStatusLine());
-            HttpEntity entity = response.getEntity();
-            String responseBodyJson = EntityUtils.toString(entity);
-            return gson.fromJson(responseBodyJson, Vehicle.class);
-        } catch (IOException e) {
-            LOGGER.info("{}", e.getMessage());
-            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
-            dex.initCause(e);
-            throw dex;
-        }
+        String result = performGetRequest(httpGet);
+        return gson.fromJson(result, Vehicle.class);
     }
 
     @Override
@@ -194,19 +177,10 @@ public class CatalogDaoImpl implements CatalogDao {
         HttpGet httpGet = setUpGetRequest(urlMainGroups, params);
         setHeadersOnGetRequest(httpGet);
 
-        try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
-            LOGGER.debug("Recieved response: {}", response.getStatusLine());
-            HttpEntity entity = response.getEntity();
-            String responseBodyJson = EntityUtils.toString(entity);
-            Type collectionType = new TypeToken<Collection<MainGroup>>() {
-            }.getType();
-            return gson.fromJson(responseBodyJson, collectionType);
-        } catch (IOException e) {
-            LOGGER.info("{}", e.getMessage());
-            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
-            dex.initCause(e);
-            throw dex;
-        }
+        String result = performGetRequest(httpGet);
+        Type collectionType = new TypeToken<Collection<MainGroup>>() {
+        }.getType();
+        return gson.fromJson(result, collectionType);
     }
 
     @Override
@@ -221,19 +195,11 @@ public class CatalogDaoImpl implements CatalogDao {
         HttpGet httpGet = setUpGetRequest(urlComponents, params);
         setHeadersOnGetRequest(httpGet);
 
-        try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
-            LOGGER.debug("Recieved response: {}", response.getStatusLine());
-            HttpEntity entity = response.getEntity();
-            String responseBodyJson = EntityUtils.toString(entity);
-            Type collectionType = new TypeToken<Collection<Component>>() {
-            }.getType();
-            return gson.fromJson(responseBodyJson, collectionType);
-        } catch (IOException e) {
-            LOGGER.info("{}", e.getMessage());
-            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
-            dex.initCause(e);
-            throw dex;
-        }
+        String result = performGetRequest(httpGet);
+        Type collectionType = new TypeToken<Collection<Component>>() {
+        }.getType();
+        return gson.fromJson(result, collectionType);
+
     }
 
     @Override
@@ -256,21 +222,11 @@ public class CatalogDaoImpl implements CatalogDao {
         HttpGet httpGet = setUpGetRequest(urlJobs, params);
         setHeadersOnGetRequest(httpGet);
 
-        try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
-            LOGGER.debug("Recieved response: {}", response.getStatusLine());
-            HttpEntity entity = response.getEntity();
-            String responseBodyJson = EntityUtils.toString(entity);
+        String result = performGetRequest(httpGet);
+        Type collectionType = new TypeToken<Collection<Job>>() {
+        }.getType();
 
-            Type collectionType = new TypeToken<Collection<Job>>() {
-            }.getType();
-
-            return gson.fromJson(responseBodyJson, collectionType);
-        } catch (IOException e) {
-            LOGGER.info("{}", e.getMessage());
-            DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
-            dex.initCause(e);
-            throw dex;
-        }
+        return gson.fromJson(result, collectionType);
     }
 
     @Override
@@ -285,13 +241,19 @@ public class CatalogDaoImpl implements CatalogDao {
         HttpGet httpGet = setUpGetRequest(PropertiesReader.getUrlDetailedJobs(), params);
         setHeadersOnGetRequest(httpGet);
 
+        String result = performGetRequest(httpGet);
+        Type collectionType = new TypeToken<Collection<DetailedJob>>() {
+        }.getType();
+        return gson.fromJson(result, collectionType);
+    }
+
+    private String performGetRequest(HttpGet httpGet) throws DafException {
         try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
-            LOGGER.debug("Recieved response: {}", response.getStatusLine());
             HttpEntity entity = response.getEntity();
-            String responseBodyJson = EntityUtils.toString(entity);
-            Type collectionType = new TypeToken<Collection<DetailedJob>>() {
-            }.getType();
-            return gson.fromJson(responseBodyJson, collectionType);
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new DafException(ErrorCode.BAD_RESPONSE, String.valueOf(response.getStatusLine().getStatusCode()));
+            }
+            return EntityUtils.toString(entity);
         } catch (IOException e) {
             LOGGER.info("{}", e.getMessage());
             DafException dex = new DafException(ErrorCode.EXECUTE_REQUEST_ERROR);
@@ -314,7 +276,7 @@ public class CatalogDaoImpl implements CatalogDao {
         try {
             URIBuilder builder = new URIBuilder(url);
             for (Map.Entry<String, String> param : paramMap.entrySet()) {
-                LOGGER.debug("setUpGetRequest param map key : value, {} : {}", param.getKey(), param.getValue());
+//                LOGGER.debug("setUpGetRequest param map key : value, {} : {}", param.getKey(), param.getValue());
                 builder.setParameter(param.getKey(), param.getValue());
             }
             URI uri = builder.build();

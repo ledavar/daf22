@@ -44,6 +44,7 @@ public class DetailedJobDeserializer implements JsonDeserializer<DetailedJob> {
             }
         }
 */
+/*
         // PartConsumption
         JsonArray parts = jsonObject.get("partsconsumption").getAsJsonArray();
         for (JsonElement part : parts) {
@@ -58,6 +59,7 @@ public class DetailedJobDeserializer implements JsonDeserializer<DetailedJob> {
         for (JsonElement tool : tools) {
             detailedJob.addSpecialTool(jsonDeserializationContext.deserialize(tool, String.class));
         }
+*/
 
         return detailedJob;
     }

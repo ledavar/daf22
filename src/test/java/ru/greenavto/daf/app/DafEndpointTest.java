@@ -288,7 +288,7 @@ public class DafEndpointTest {
     }
 
     @Test
-    public void testDetailedJobsAll() throws DafException {
+    public void testOneDetailedJob() {
         if (SUCCESS.equals(dafEndpoint.login(PropertiesReader.getUserName(), PropertiesReader.getPassword()))) {
             // get Vin
             String vinString = dafEndpoint.getVin(code);
@@ -313,11 +313,6 @@ public class DafEndpointTest {
             Collection<Component> componentCollection = gson.fromJson(componentsString, collectionType);
             assertTrue(componentCollection.size() != 0);
 
-            // get Components for ALL MainGroups
-           /* for (MainGroup mainGroup : mainGroupCollection) {
-
-            }*/
-
             // get Jobs by collection[0] Components
             Component component = new ArrayList<>(componentCollection).get(0);
             String jobsString = dafEndpoint.getJobsCollection(vin, component);
@@ -336,7 +331,7 @@ public class DafEndpointTest {
 
 
     @Test
-    public void testAllDetailedJobs() throws DafException {
+    public void testAllDetailedJobs() {
         if (SUCCESS.equals(dafEndpoint.login(PropertiesReader.getUserName(), PropertiesReader.getPassword()))) {
             // get Vin
             String vinString = dafEndpoint.getVin(code);
