@@ -12,6 +12,7 @@ import ru.greenavto.daf.model.Job;
 import ru.greenavto.daf.model.MainGroup;
 import ru.greenavto.daf.model.Vin;
 import ru.greenavto.daf.model.detailedjob.DetailedJob;
+import ru.greenavto.daf.util.DafFileWriter;
 import ru.greenavto.daf.util.PropertiesReader;
 
 import java.lang.reflect.Type;
@@ -324,9 +325,16 @@ public class DafEndpointTest {
             assertTrue(jobsCollection.size() != 0);
 
             // get details of job = jobsCollection[0]
-            Job job = new ArrayList<>(jobsCollection).get(0);
-            String detailedJobs = dafEndpoint.getDetailedJob(vin, job);
-            LOGGER.debug("Detailed job: {}", detailedJobs);
+            //Job job = new ArrayList<>(jobsCollection).get(0);
+            //String detailedJobs = dafEndpoint.getDetailedJob(vin, job);
+            //LOGGER.debug("Detailed job: {}", detailedJobs);
+
+
+            for (Job job : jobsCollection) {
+                String detailedJobs = dafEndpoint.getDetailedJob(vin, job);
+                LOGGER.debug("Detailed job: {}", detailedJobs);
+            }
+
         }
     }
 
@@ -370,10 +378,14 @@ public class DafEndpointTest {
 
             // get all detailed jobs one by one
             Collection<DetailedJob> detailedJobCollection = new ArrayList<>();
+            StringBuilder sb = new StringBuilder();
             for (Job job : jobCollection) {
                 String detailedJobs = dafEndpoint.getDetailedJob(vin, job);
+                sb.append(detailedJobs);
                 LOGGER.debug("Detailed job: {}", detailedJobs);
             }
+
+            DafFileWriter.write(sb.toString());
 
         }
     }
