@@ -61,12 +61,12 @@ public class CatalogDaoImpl implements CatalogDao {
             .registerTypeAdapter(Description.class, new DescriptionDeserializer())
             .registerTypeAdapter(AttributeGroup.class, new AttributeGroupDeserializer())
             .registerTypeAdapter(Vehicle.class, new VehicleDeserializer())
-            .registerTypeAdapter(MainGroup.class, new MainGroupDeserializer())
-            .registerTypeAdapter(Vin.class, new VinDeserializer())
-            .registerTypeAdapter(Component.class, new ComponentDeserializer())
-            .registerTypeAdapter(Job.class, new JobDeserializer())
-            .registerTypeAdapter(PartConsumption.class, new PartConsumptionDeserializer())
-            .registerTypeAdapter(DetailedJob.class, new DetailedJobDeserializer())
+            //.registerTypeAdapter(MainGroup.class, new MainGroupDeserializer())
+            //.registerTypeAdapter(Vin.class, new VinDeserializer())
+            //.registerTypeAdapter(Component.class, new ComponentDeserializer())
+            //.registerTypeAdapter(Job.class, new JobDeserializer())
+            //.registerTypeAdapter(PartConsumption.class, new PartConsumptionDeserializer())
+            //.registerTypeAdapter(DetailedJob.class, new DetailedJobDeserializer())
             .create();
 
     private static String site = PropertiesReader.getSite();
@@ -242,6 +242,7 @@ public class CatalogDaoImpl implements CatalogDao {
         setHeadersOnGetRequest(httpGet);
 
         String result = performGetRequest(httpGet);
+        //LOGGER.debug("RESPONSE BODY {}", result);
         Type collectionType = new TypeToken<Collection<DetailedJob>>() {
         }.getType();
         return gson.fromJson(result, collectionType);
@@ -251,7 +252,7 @@ public class CatalogDaoImpl implements CatalogDao {
         try (CloseableHttpResponse response = httpClient.execute(httpGet, context)) {
             HttpEntity entity = response.getEntity();
             if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                throw new DafException(ErrorCode.BAD_RESPONSE, String.valueOf(response.getStatusLine().getStatusCode()));
+                throw new DafException(ErrorCode.BAD_RESPONSE, response.getStatusLine().getStatusCode(), httpGet.getURI().toString());
             }
             return EntityUtils.toString(entity);
         } catch (IOException e) {
@@ -272,7 +273,7 @@ public class CatalogDaoImpl implements CatalogDao {
     }
 
     private HttpGet setUpGetRequest(String url, Map<String, String> paramMap) throws DafException {
-        LOGGER.debug("setUpGetRequest parameter url: {}", url);
+//        LOGGER.debug("setUpGetRequest parameter url: {}", url);
         try {
             URIBuilder builder = new URIBuilder(url);
             for (Map.Entry<String, String> param : paramMap.entrySet()) {

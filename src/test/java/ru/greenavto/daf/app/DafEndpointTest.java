@@ -11,6 +11,7 @@ import ru.greenavto.daf.model.Component;
 import ru.greenavto.daf.model.Job;
 import ru.greenavto.daf.model.MainGroup;
 import ru.greenavto.daf.model.Vin;
+import ru.greenavto.daf.model.detailedjob.DetailedJob;
 import ru.greenavto.daf.util.PropertiesReader;
 
 import java.lang.reflect.Type;
@@ -329,7 +330,6 @@ public class DafEndpointTest {
         }
     }
 
-
     @Test
     public void testAllDetailedJobs() {
         if (SUCCESS.equals(dafEndpoint.login(PropertiesReader.getUserName(), PropertiesReader.getPassword()))) {
@@ -369,6 +369,7 @@ public class DafEndpointTest {
             }
 
             // get all detailed jobs one by one
+            Collection<DetailedJob> detailedJobCollection = new ArrayList<>();
             for (Job job : jobCollection) {
                 String detailedJobs = dafEndpoint.getDetailedJob(vin, job);
                 LOGGER.debug("Detailed job: {}", detailedJobs);

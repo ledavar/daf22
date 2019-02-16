@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import ru.greenavto.daf.model.detailedjob.DetailedJob;
 import ru.greenavto.daf.model.detailedjob.PartConsumption;
 
+import javax.xml.soap.Detail;
 import java.lang.reflect.Type;
 
 public class DetailedJobDeserializer implements JsonDeserializer<DetailedJob> {
@@ -30,9 +31,9 @@ public class DetailedJobDeserializer implements JsonDeserializer<DetailedJob> {
         detailedJob.setFolder(jsonObject.get("folder").getAsBoolean());
         detailedJob.setExpanded(jsonObject.get("expanded").getAsBoolean());
         detailedJob.setLazy(jsonObject.get("lazy").getAsBoolean());
-/*
+
         // will it work recursively??? NO!
-        JsonArray children = jsonObject.get("children").getAsJsonArray();
+   /*     JsonArray children = jsonObject.get("children").getAsJsonArray();
         LOGGER.debug("CHILDREN {}", children);
         if (children.isJsonArray()) {
             for (JsonElement child : children) {
@@ -42,9 +43,17 @@ public class DetailedJobDeserializer implements JsonDeserializer<DetailedJob> {
                     detailedJob.addChild(detailedJobChild);
                 }
             }
+        }*/
+
+
+        while (detailedJob.isFolder()) {
+            JsonArray newRoot = jsonObject.get("children").getAsJsonArray();
+            LOGGER.debug("CHILD {}", newRoot);
+            DetailedJob child = jsonDeserializationContext.deserialize(newRoot, DetailedJob.class);
+            child.addChild(child);
         }
-*/
-/*
+
+
         // PartConsumption
         JsonArray parts = jsonObject.get("partsconsumption").getAsJsonArray();
         for (JsonElement part : parts) {
@@ -59,9 +68,9 @@ public class DetailedJobDeserializer implements JsonDeserializer<DetailedJob> {
         for (JsonElement tool : tools) {
             detailedJob.addSpecialTool(jsonDeserializationContext.deserialize(tool, String.class));
         }
-*/
 
         return detailedJob;
     }
+
 
 }
