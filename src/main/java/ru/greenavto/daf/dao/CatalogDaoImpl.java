@@ -218,7 +218,9 @@ public class CatalogDaoImpl implements CatalogDao {
 
     @Override
     public Collection<DetailedJob> getDetailedJobsCollection(DetailedJobRequestDto detailedJobRequestDto) throws DafException {
-        LOGGER.debug("getDetailedJobs started. Parameters: {}, {}", detailedJobRequestDto.getVin(), detailedJobRequestDto.getJobId());
+        LOGGER.debug("getDetailedJobs started. Parameters: {}, {}"
+                , detailedJobRequestDto.getVin()
+                , detailedJobRequestDto.getJobId());
 
         Map<String, String> params = new HashMap<>();
         params.put("vin", detailedJobRequestDto.getVin());
